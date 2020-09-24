@@ -27,19 +27,6 @@ services:
       - ${ROOT}/downloads/torrent-blackhole:/downloads # place where to put .torrent files for manual download
       - ${ROOT}/config/jackett:/config # config files
 
-  nzbget:
-    container_name: nzbget
-    image: linuxserver/nzbget:latest
-    restart: unless-stopped
-    network_mode: host
-    environment:
-      - PUID=${PUID} # default user id, defined in .env
-      - PGID=${PGID} # default group id, defined in .env
-      - TZ=${TZ} # timezone, defined in .env
-    volumes:
-      - ${ROOT}/downloads:/downloads # download folder
-      - ${ROOT}/config/nzbget:/config # config files
-
   sonarr:
     container_name: sonarr
     image: linuxserver/sonarr:latest
@@ -98,3 +85,19 @@ services:
       - ${ROOT}/complete/tv:/tv # tv shows folder
     ports:
       - 6767:6767
+
+  emby:
+    image: linuxserver/emby
+    container_name: emby
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+      - UMASK_SET=022 #optional
+    volumes:
+      - ${ROOT}/config/emby:/config
+      - ${ROOT}/complete:/data # media library
+
+    ports:
+      - 8096:8096
+      - 8920:8920 #optional
